@@ -81,7 +81,7 @@ body{
   border: 1px solid var(--stroke);
   box-shadow: var(--shadow);
   display: flex;
-  align-items:element;
+  justify-content: space-between;
   padding: 6px 8px;
   gap: 6px;
   overflow:hidden;
@@ -93,6 +93,7 @@ body{
 .kbd{
   width: 44px;
   height: 44px;
+  margin-right: 10px;
   border-radius: 14px;
   border: 1px solid rgba(0,0,0,.08);
   background: rgba(255,255,255,.75);

@@ -6,8 +6,8 @@
 
 ; ====== Config ======
 APP_TITLE := "Keyboard Dock"
-UI_W_EXPANDED := 136        ; panel width (kbd + close buttons)
-UI_W_COLLAPSED := 26        ; only toggle tab width
+UI_W_EXPANDED := 149        ; panel width (kbd + close buttons)
+UI_W_COLLAPSED := 33        ; only toggle tab width
 UI_H := 45
 
 ; Gap to taskbar / screen edges
@@ -29,7 +29,7 @@ global gDragStartY := 0
 try {
     InitUI()
 } catch as e {
-    MsgBox "启动失败：" e.Message "`n`n" e.What "`nLine: " e.Line, "Error", 16
+    MsgBox "Startup failed: " e.Message "`n`n" e.What "`nLine: " e.Line, "Error", 16
     ExitApp
 }
 
@@ -44,7 +44,7 @@ InitUI() {
 
     htmlPath := A_ScriptDir "\html\index.html"
     if !FileExist(htmlPath)
-        throw Error("找不到 html/index.html: " htmlPath)
+        throw Error("Cannot find html/index.html: " htmlPath)
 
     ; Change working directory to script directory so Neutron can find html files
     SetWorkingDir(A_ScriptDir)
@@ -68,12 +68,6 @@ InitUI() {
         ; ignore if not available
     }
 
-    ; Enable window dragging
-    try {
-        OnMessage(0x0201, WM_LBUTTONDOWN)  ; Handle left button down for dragging
-    } catch {
-        ; ignore if not available
-    }
 
     ; Ask UI to reflect initial state (optional)
     PushStateToUI()
@@ -95,6 +89,62 @@ Clicked(neutron, which) {
         default:
             ; Unknown events are ignored for stability
             return
+    }
+}
+; =====================================================================
+; Drag logic: free drag -> release detection -> snap to bounds if needed
+; =====================================================================
+Drag(neutron) {
+    ; 1. Let system handle dragging for smooth tracking experience
+    PostMessage 0xA1, 2, 0, , "ahk_id " neutron.hWnd
+
+    ; 2. Wait for left mouse button release (drag ends)
+    KeyWait "LButton"
+
+    ; 3. After drag ends, detect position and snap to bounds if needed
+    CheckAndSnap(neutron)
+}
+
+CheckAndSnap(neutron) {
+    try {
+        ; Get current window position and size
+        WinGetPos &x, &y, &w, &h, "ahk_id " neutron.hWnd
+        
+        ; Get work area of primary monitor (automatically excludes taskbar height)
+        ; WALeft, WATop, WARight, WABottom are left, top, right, bottom boundaries of work area
+        MonitorGetWorkArea 1, &WALeft, &WATop, &WARight, &WABottom
+
+        ; Record target coordinates, default to keeping current position
+        targetX := x
+        targetY := y
+        needsFix := false
+
+        ; --- 1. Horizontal boundary check ---
+        ; Logic: if window's right edge (x + w) exceeds screen's right edge (WARight)
+        ; it means window is partially off the right side of screen
+        if (x + w > WARight) {
+            ; Fix: snap window to right edge
+            targetX := WARight - w
+            needsFix := true
+        }
+
+        ; --- 2. Vertical boundary check ---
+        ; Logic: if window's bottom edge (y + h) exceeds taskbar top edge (WABottom)
+        ; it means window is partially below the taskbar or off-screen
+        if (y + h > WABottom) {
+            ; Fix: snap window to above taskbar
+            targetY := WABottom - h
+            needsFix := true
+        }
+
+        ; --- Apply fix ---
+        if (needsFix) {
+            ; Use WinMove to reposition window to corrected coordinates
+            WinMove targetX, targetY, , , "ahk_id " neutron.hWnd
+        }
+
+    } catch {
+        ; Ignore potential handle errors
     }
 }
 
@@ -120,11 +170,13 @@ ToggleCollapsed() {
     ; Option B (recommended): actually resize window so only arrow remains.
     ; This makes it feel like ToDesk: only one arrow left when collapsed.
     w := gCollapsed ? UI_W_COLLAPSED : UI_W_EXPANDED
-    x := GetDockX(w)
-    y := GetDockY(UI_H)
+
+    WinGetPos &currX, &currY, &currW, &currH, "ahk_id " neutron.hWnd
+    currentRightEdge := currX + currW
+    x := currentRightEdge - W
 
     try {
-        WinMove x, y, w, UI_H, "ahk_id " neutron.hWnd
+        WinMove x, currY, w, UI_H, "ahk_id " neutron.hWnd
     } catch {
         ; ignore if hWnd not available
     }
@@ -297,19 +349,3 @@ PushStateToUI() {
     }
 }
 
-; =====================================================================
-; Window Drag Handler
-; =====================================================================
-WM_LBUTTONDOWN(wParam, lParam, msg, hwnd) {
-    global neutron
-    
-    ; Only process if it's our window
-    try {
-        if (hwnd = neutron.hWnd) {
-            ; PostMessage to initiate window drag
-            PostMessage 0xA1, 2, 0, , "ahk_id " hwnd  ; WM_NCLBUTTONDOWN, HTCAPTION
-        }
-    } catch {
-        ; ignore if hWnd not available
-    }
-}
