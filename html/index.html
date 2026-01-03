@@ -1,0 +1,30 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Keyboard Dock</title>
+  <link rel="stylesheet" href="./app.css" />
+</head>
+<body>
+  <div class="dock" id="dock">
+    <!-- Main panel with buttons -->
+    <div class="panel" id="panel" role="group" aria-label="键盘控制面板">
+      <button class="kbd" id="kbd" aria-label="禁用/启用键盘" onclick="try{ahk.Clicked('kbd');}catch(e){}">
+        <svg viewBox="0 0 24 24" aria-hidden="true">
+          <path d="M4 7a3 3 0 0 1 3-3h10a3 3 0 0 1 3 3v10a3 3 0 0 1-3 3H7a3 3 0 0 1-3-3V7zm3-1a1 1 0 0 0-1 1v10a1 1 0 0 0 1 1h10a1 1 0 0 0 1-1V7a1 1 0 0 0-1-1H7zm1.25 3.25h1.5v1.5h-1.5v-1.5zm3 0h1.5v1.5h-1.5v-1.5zm3 0h1.5v1.5h-1.5v-1.5zm-6 3h7.5v1.5h-7.5v-1.5zm0 3h4.5v1.5H8.25v-1.5z"/>
+        </svg>
+      </button>
+
+      <button class="close" id="close" aria-label="退出" onclick="try{ahk.Clicked('exit');}catch(e){}">
+        <svg viewBox="0 0 24 24" aria-hidden="true">
+          <path d="M18.3 5.7a1 1 0 0 1 0 1.4L13.4 12l4.9 4.9a1 1 0 1 1-1.4 1.4L12 13.4l-4.9 4.9a1 1 0 1 1-1.4-1.4l4.9-4.9-4.9-4.9a1 1 0 0 1 1.4-1.4L12 10.6l4.9-4.9a1 1 0 0 1 1.4 0z"/>
+        </svg>
+      </button>
+    </div>
+  </div>
+
+  <script src="./app.js"></script>
+</body>
+</html>
