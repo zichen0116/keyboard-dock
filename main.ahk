@@ -6,18 +6,21 @@
 
 ; ====== Config ======
 APP_TITLE := "Keyboard Dock"
-UI_W_EXPANDED := 140        ; panel width (kbd + close buttons)
-UI_W_COLLAPSED := 24        ; only toggle tab width
-UI_H := 56
+UI_W_EXPANDED := 136        ; panel width (kbd + close buttons)
+UI_W_COLLAPSED := 26        ; only toggle tab width
+UI_H := 45
 
 ; Gap to taskbar / screen edges
-MARGIN_RIGHT := 12
-MARGIN_BOTTOM := 10
+MARGIN_RIGHT := 0
+MARGIN_BOTTOM := 0
 
 ; ====== State ======
 global neutron := 0
 global gCollapsed := false
 global gKbdBlocked := false
+global gDragging := false
+global gDragStartX := 0
+global gDragStartY := 0
 
 ; Emergency hotkey (always available): Ctrl+Alt+Backspace
 ^!BS::EmergencyUnblock()
@@ -61,6 +64,13 @@ InitUI() {
     ; If Neutron exposes hWnd: WinSetAlwaysOnTop(true, "ahk_id " neutron.hWnd)
     try {
         WinSetAlwaysOnTop true, "ahk_id " neutron.hWnd
+    } catch {
+        ; ignore if not available
+    }
+
+    ; Enable window dragging
+    try {
+        OnMessage(0x0201, WM_LBUTTONDOWN)  ; Handle left button down for dragging
     } catch {
         ; ignore if not available
     }
@@ -241,8 +251,8 @@ GetBlockKeyList() {
     ; Modifiers: we generally DO swallow them too to prevent any accidental shortcuts,
     ; but leaving them enabled can be useful. Choose your preference.
     ; If you swallow modifiers, mouse-only still works, but hotkeys won't.
-    for k in ["LShift","RShift","LControl","RControl","LAlt","RAlt","LWin","RWin"]
-        keys.Push(k)
+    ; for k in ["LShift","RShift","LControl","RControl","LAlt","RAlt","LWin","RWin"]
+    ;    keys.Push(k)
 
     return keys
 }
@@ -284,5 +294,22 @@ PushStateToUI() {
         } catch {
             ; ignore if not supported
         }
+    }
+}
+
+; =====================================================================
+; Window Drag Handler
+; =====================================================================
+WM_LBUTTONDOWN(wParam, lParam, msg, hwnd) {
+    global neutron
+    
+    ; Only process if it's our window
+    try {
+        if (hwnd = neutron.hWnd) {
+            ; PostMessage to initiate window drag
+            PostMessage 0xA1, 2, 0, , "ahk_id " hwnd  ; WM_NCLBUTTONDOWN, HTCAPTION
+        }
+    } catch {
+        ; ignore if hWnd not available
     }
 }

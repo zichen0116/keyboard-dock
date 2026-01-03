@@ -1,5 +1,5 @@
 :root{
-  --panel-h: 56px;
+  --panel-h: 45px;
   --panel-w: 120px;
   --radius: 16px;
   --shadow: 0 10px 28px rgba(0,0,0,.18);
@@ -19,30 +19,75 @@ body{
 /* Whole dock - position relative for toggle positioning */
 .dock{
   position: relative;
-  height: var(--panel-h);
+  height: 100vh;
   display:flex;
   align-items:center;
+  justify-content: flex-end; /* 靠右对齐，方便向左收缩 */
+  align-items: center;     
+  justify-content: flex-end;
   padding: 0;
-  user-select:none;
+  -webkit-app-region: drag;
 }
 
+/* 2. 新增：手柄样式 (仿 ToDesk 蓝色风格) */
+.handle {
+  width: 24px;       /* 手柄宽度 */
+  height: 40px;      /* 手柄高度 */
+  background: #3A78FF;
+  border-radius: 12px 0 0 12px; /* 左侧圆角，右侧直角连接面板 */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  box-shadow: -2px 4px 12px rgba(58, 120, 255, 0.3);
+  z-index: 10;       /* 保证层级 */
+  transition: all 0.2s ease;
+}
 
+.handle:hover {
+  background: #3367d6; /* hover 变深色 */
+}
+
+.handle svg {
+  width: 20px;
+  height: 20px;
+  fill: white;
+  transition: transform 0.3s ease;
+}
+
+.dock.collapsed .panel {
+  display: none; /* 直接隐藏面板 */
+}
+
+.dock.collapsed .handle {
+  border-radius: 12px; /* 收起时变成全圆角，或者保持 12px 0 0 12px 看你喜好 */
+  width: 32px; /* 收起时稍微宽一点点方便点击 */
+}
+
+/* 让箭头旋转 180度 */
+.dock.collapsed .handle svg {
+  transform: rotate(180deg);
+}
 
 /* Panel */
 .panel{
   height: var(--panel-h);
-  width: fit-content;
+  width: auto;    
+  flex: 0 0 auto;   
   border-radius: var(--radius);
+  border-top-left-radius: 0;
+  border-bottom-left-radius: 0;
   background: var(--bg);
   border: 1px solid var(--stroke);
   box-shadow: var(--shadow);
-  display:flex;
-  align-items:center;
-  padding: 8px 12px;
-  gap: 16px;
+  display: flex;
+  align-items:element;
+  padding: 6px 8px;
+  gap: 6px;
   overflow:hidden;
-  transition: opacity .18s ease, transform .22s ease;
+  transition: opacity 0.2s, transform 0.2s;
 }
+
 
 /* Keyboard button */
 .kbd{
@@ -56,7 +101,12 @@ body{
   cursor:pointer;
   transition: transform .12s ease, background .18s ease, border-color .18s ease;
 }
-.kbd:hover{ background: rgba(245,245,245,.9); }
+/* 防止按钮失效 */
+.kbd, .close, .handle {
+  -webkit-app-region: no-drag;
+  cursor: pointer; 
+}
+.kbd:hover{ background: rgba(196, 196, 196, 0.507); }
 .kbd:active{ transform: translateY(1px); }
 .kbd svg{ width: 22px; height: 22px; }
 .kbd svg path{ fill: rgba(0,0,0,.78); }
@@ -78,7 +128,7 @@ body{
   cursor:pointer;
   transition: transform .12s ease, background .12s ease;
 }
-.close:hover{ background: rgba(245,245,245,.9); }
+.close:hover{ background: rgba(196, 196, 196, 0.507); }
 .close:active{ transform: translateY(1px); }
 .close svg{ width: 20px; height: 20px; }
 .close svg path{ fill: rgba(0,0,0,.78); }

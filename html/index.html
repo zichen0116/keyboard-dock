@@ -9,6 +9,7 @@
 </head>
 <body>
   <div class="dock" id="dock">
+
     <!-- Main panel with buttons -->
     <div class="panel" id="panel" role="group" aria-label="键盘控制面板">
       <button class="kbd" id="kbd" aria-label="禁用/启用键盘" onclick="try{ahk.Clicked('kbd');}catch(e){}">
@@ -23,6 +24,13 @@
         </svg>
       </button>
     </div>
+
+    <div class="handle" onclick="ahk.Clicked('toggle')">
+      <svg viewBox="0 0 24 24">
+        <path d="M15.41 7.41L14 6l-6 6 6 6 1.41-1.41L10.83 12z"/>
+      </svg>
+    </div>
+    
   </div>
 
   <script src="./app.js"></script>
