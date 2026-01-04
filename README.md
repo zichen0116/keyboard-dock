@@ -1,4 +1,4 @@
-# Keyboard Dock / 键盘停靠工具
+# Keyboard Dock / 笔记本键盘屏蔽工具
 
 [English](#english) | [中文](#中文)
 
