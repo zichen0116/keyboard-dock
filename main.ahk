@@ -25,6 +25,15 @@ global gDragStartY := 0
 ; Emergency hotkey (always available): Ctrl+Alt+Backspace
 ^!BS::EmergencyUnblock()
 
+; ====== Embed UI files into EXE (no extract) ======
+if false {
+    FileInstall "html/index.html", "*"
+    FileInstall "html/app.css",   "*"
+    FileInstall "html/app.js",    "*"
+}
+
+
+
 ; ====== Start ======
 try {
     InitUI()
@@ -42,34 +51,19 @@ return
 InitUI() {
     global neutron, UI_W_EXPANDED, UI_H
 
-    htmlPath := A_ScriptDir "\html\index.html"
-    if !FileExist(htmlPath)
-        throw Error("Cannot find html/index.html: " htmlPath)
 
-    ; Change working directory to script directory so Neutron can find html files
-    SetWorkingDir(A_ScriptDir)
-
-    ; Create window
     neutron := NeutronWindow()
         .Load("html/index.html")
-        .Opt("-Resize -MaximizeBox -MinimizeBox")   ; fixed-size tool window
+        .Opt("-Resize -MaximizeBox -MinimizeBox")
         .OnEvent("Close", (*) => ExitProc())
         .Show("x" GetDockX(UI_W_EXPANDED) " y" GetDockY(UI_H) " w" UI_W_EXPANDED " h" UI_H, APP_TITLE)
-
-    ; AHK object is automatically exposed to JS via Neutron._Dispatch
-    ; In your html/app.js, call: ahk.Clicked('kbd'|'toggle'|'exit')
-    ; and: ahk.SyncFromUi({ collapsed:true, blocked:false }) if you want.
-
-    ; Optional: start always-on-top (depends on Neutron implementation)
-    ; If Neutron exposes hWnd: WinSetAlwaysOnTop(true, "ahk_id " neutron.hWnd)
     try {
         WinSetAlwaysOnTop true, "ahk_id " neutron.hWnd
     } catch {
-        ; ignore if not available
+        ;
     }
 
-
-    ; Ask UI to reflect initial state (optional)
+    
     PushStateToUI()
 }
 
