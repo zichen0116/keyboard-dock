@@ -1,7 +1,14 @@
 :root{
-  --panel-h: 45px;
-  --panel-w: 120px;
-  --radius: 16px;
+  /* Base sizes - scaled for high DPI (2x) */
+  --panel-h: 90px;
+  --panel-w: 200px;
+  --button-size: 88px;
+  --handle-w: 48px;
+  --handle-w-collapsed: 64px;
+  --handle-h: 80px;
+  --radius: 32px;
+  --button-radius: 24px;  
+  --handle-radius: 24px;
   --shadow: 0 10px 28px rgba(0,0,0,.18);
   --bg: rgba(255,255,255,.92);
   --stroke: rgba(0,0,0,.08);
@@ -12,7 +19,7 @@
 *{ box-sizing:border-box; }
 html,body{ height:100%; margin:0; font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, "Microsoft YaHei", sans-serif; }
 body{
-  background: transparent;   /* important for Neutron */
+  background: transparent;   
   overflow:hidden;
 }
 
@@ -22,68 +29,65 @@ body{
   height: 100vh;
   display:flex;
   align-items:center;
-  justify-content: flex-end; /* 靠右对齐，方便向左收缩 */
+  justify-content: flex-end; 
   align-items: center;     
   justify-content: flex-end;
   padding: 0;
   -webkit-app-region: drag;
 }
 
-/* 2. 新增：手柄样式 (仿 ToDesk 蓝色风格) */
 .handle {
-  width: 24px;       /* 手柄宽度 */
-  height: 40px;      /* 手柄高度 */
-  background: #3A78FF;
-  border-radius: 12px 0 0 12px; /* 左侧圆角，右侧直角连接面板 */
+  width: var(--handle-w);       
+  height: var(--handle-h);    
+  background: var(--accent);
+  border-radius: 15px;
   display: flex;
   align-items: center;
   justify-content: center;
   cursor: pointer;
   box-shadow: -2px 4px 12px rgba(58, 120, 255, 0.3);
-  z-index: 10;       /* 保证层级 */
+  z-index: 10;       
   transition: all 0.2s ease;
 }
 
 .handle:hover {
-  background: #3367d6; /* hover 变深色 */
+  background: rgba(196, 196, 196, 0.507); /* hover 变深色 */
 }
 
 .handle svg {
-  width: 20px;
-  height: 20px;
-  fill: white;
+  width: 40px;   
+  height: 40px;  
+  fill: #3367d6;
   transition: transform 0.3s ease;
 }
 
 .dock.collapsed .panel {
-  display: none; /* 直接隐藏面板 */
+  display: none; 
 }
 
 .dock.collapsed .handle {
-  border-radius: 12px; /* 收起时变成全圆角，或者保持 12px 0 0 12px 看你喜好 */
-  width: 32px; /* 收起时稍微宽一点点方便点击 */
+  border-radius: var(--handle-radius); 
+  width: 56px; 
 }
 
-/* 让箭头旋转 180度 */
 .dock.collapsed .handle svg {
   transform: rotate(180deg);
 }
 
-/* Panel */
 .panel{
   height: var(--panel-h);
-  width: auto;    
-  flex: 0 0 auto;   
+  width: auto;
+  flex: 0 0 auto;
   border-radius: var(--radius);
   border-top-left-radius: 0;
   border-bottom-left-radius: 0;
-  background: var(--bg);
-  border: 1px solid var(--stroke);
-  box-shadow: var(--shadow);
+  background: transparent;  
+  border: none;             
+  box-shadow: none;        
   display: flex;
   justify-content: space-between;
-  padding: 6px 8px;
-  gap: 6px;
+  padding: 12px 16px;  
+  gap: 12px;          
   overflow:hidden;
   transition: opacity 0.2s, transform 0.2s;
 }
@@ -91,38 +95,37 @@ body{
 
 /* Keyboard button */
 .kbd{
-  width: 44px;
-  height: 44px;
-  margin-right: 10px;
-  border-radius: 14px;
-  border: 1px solid rgba(0,0,0,.08);
+  width: var(--button-size);
+  height: var(--button-size);
+  margin-right: 20px;  /* 2x scaling: 10px -> 20px */
+  border-radius: 15px;
+  border: 2px solid rgba(0,0,0,.08);
   background: rgba(255,255,255,.75);
   display:grid;
   place-items:center;
   cursor:pointer;
   transition: transform .12s ease, background .18s ease, border-color .18s ease;
 }
-/* 防止按钮失效 */
+
 .kbd, .close, .handle {
   -webkit-app-region: no-drag;
-  cursor: pointer; 
+  cursor: pointer;
 }
 .kbd:hover{ background: rgba(196, 196, 196, 0.507); }
 .kbd:active{ transform: translateY(1px); }
-.kbd svg{ width: 22px; height: 22px; }
+.kbd svg{ width: 44px; height: 44px; }  
 .kbd svg path{ fill: rgba(0,0,0,.78); }
 
 /* Blocked state (red) */
-.panel.blocked{ border-color: rgba(232,80,80,.55); }
 .panel.blocked .kbd{ background: rgba(232,80,80,.92); border-color: rgba(232,80,80,.2); }
 .panel.blocked .kbd svg path{ fill: white; }
 
 /* Close button */
 .close{
-  width: 44px;
-  height: 44px;
-  border-radius: 14px;
-  border: 1px solid rgba(0,0,0,.08);
+  width: var(--button-size);
+  height: var(--button-size);
+  border-radius: 15px;
+  border: 2px solid rgba(0,0,0,.08);
   background: rgba(255,255,255,.75);
   display:grid;
   place-items:center;
@@ -131,5 +134,5 @@ body{
 }
 .close:hover{ background: rgba(196, 196, 196, 0.507); }
 .close:active{ transform: translateY(1px); }
-.close svg{ width: 20px; height: 20px; }
+.close svg{ width: 40px; height: 40px; } 
 .close svg path{ fill: rgba(0,0,0,.78); }

@@ -6,9 +6,12 @@
 
 ; ====== Config ======
 APP_TITLE := "Keyboard Dock"
-UI_W_EXPANDED := 149        ; panel width (kbd + close buttons)
-UI_W_COLLAPSED := 33        ; only toggle tab width
-UI_H := 45
+
+; UI sizes for high DPI screens (2x scaling for 150% DPI)
+; Window width = handle (48) + panel content (~240)
+global UI_W_EXPANDED := 233    ; handle + 2 buttons + padding/gap
+global UI_W_COLLAPSED := 64    ; handle width when collapsed (32 * 2)
+global UI_H := 80              ; 45 * 2
 
 ; Gap to taskbar / screen edges
 MARGIN_RIGHT := 0
@@ -51,7 +54,6 @@ return
 InitUI() {
     global neutron, UI_W_EXPANDED, UI_H
 
-
     neutron := NeutronWindow()
         .Load("html/index.html")
         .Opt("-Resize -MaximizeBox -MinimizeBox")
@@ -63,7 +65,6 @@ InitUI() {
         ;
     }
 
-    
     PushStateToUI()
 }
 

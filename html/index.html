@@ -10,6 +10,13 @@
 <body>
   <div class="dock" id="dock">
 
+    <!-- Handle for collapse/expand -->
+    <div class="handle" onclick="ahk.Clicked('toggle')" >
+      <svg viewBox="0 0 24 24">
+        <path d="M15.41 7.41L14 6l-6 6 6 6 1.41-1.41L10.83 12z"/>
+      </svg>
+    </div>
+
     <!-- Main panel with buttons -->
     <div class="panel" id="panel" role="group" aria-label="Keyboard control panel" onmousedown="ahk.Drag()">
       <button class="kbd kbdRight"  id="kbd" aria-label="Disable/Enable keyboard" onclick="try{ahk.Clicked('kbd');}catch(e){}" onmousedown="event.stopPropagation()">
@@ -23,12 +30,6 @@
           <path d="M18.3 5.7a1 1 0 0 1 0 1.4L13.4 12l4.9 4.9a1 1 0 1 1-1.4 1.4L12 13.4l-4.9 4.9a1 1 0 1 1-1.4-1.4l4.9-4.9-4.9-4.9a1 1 0 0 1 1.4-1.4L12 10.6l4.9-4.9a1 1 0 0 1 1.4 0z"/>
         </svg>
       </button>
-    </div>
-
-    <div class="handle" onclick="ahk.Clicked('toggle')" >
-      <svg viewBox="0 0 24 24">
-        <path d="M15.41 7.41L14 6l-6 6 6 6 1.41-1.41L10.83 12z"/>
-      </svg>
     </div>
 
   </div>

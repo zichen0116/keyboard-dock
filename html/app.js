@@ -3,7 +3,7 @@ window.setState = function (state) {
   if (!state) return;
   var dock = document.getElementById('dock');
   var panel = document.getElementById('panel');
-  
+
   if (state.collapsed === true) {
     dock.className = 'dock collapsed';
   } else if (state.collapsed === false) {
